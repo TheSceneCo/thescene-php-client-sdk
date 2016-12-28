@@ -19,7 +19,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the Lesser GNU General Public License.
 */
 
-function thescene_events($atts, $content = null){
+function thescene_shortcode($atts, $content = null){
 
     require_once('thescene-php-client-sdk-verify.php');
 
@@ -46,7 +46,7 @@ function thescene_events($atts, $content = null){
 
         //////////////////////////////////////////////////////////////////////////////////////////////
 
-/*        $url_welcome = $url_master."api";
+        $url_welcome = $url_master."api";
 
         $ch_welcome = curl_init($url_welcome);
         curl_setopt($ch_welcome, CURLOPT_HTTPHEADER, 
@@ -56,38 +56,13 @@ function thescene_events($atts, $content = null){
         $response_welcome = curl_exec($ch_welcome);
         $result_welcome = json_decode($response_welcome, true);
         curl_close($ch_welcome);
-        var_dump($result_welcome);*/
+        //var_dump($result_welcome);
 
         //////////////////////////////////////////////////////////////////////////////////////////////
 
-        $url_events = $url_master."api/events";
+        $get_url_events = array_filter(explode('{', $result_welcome['_links']['events']['href']));
+        $output = thescene_events($result_oauth['access_token'], $get_url_events[0]);
 
-        $ch_events = curl_init($url_events);
-        curl_setopt($ch_events, CURLOPT_HTTPHEADER, 
-            array('Authorization: bearer '.$result_oauth['access_token'])
-        );
-        curl_setopt($ch_events, CURLOPT_RETURNTRANSFER, true);
-        $response_events = curl_exec($ch_events);
-        $result_events = json_decode($response_events, true);
-        curl_close($ch_events);
-        //$output .= '<pre>'.print_r($result_events, true).'</pre>';
-        $output .= '<div class="thescene_events">';
-        foreach ($result_events['_embedded']['events'] as $single_event) {
-            $output .= '<p class="thescene_event">';
-                $output .= '<span class="thescene_event_line">'.$single_event['eventName'].'</span>';
-                if($single_event['startTime'] != '')
-                {
-                    $output .= '<span class="thescene_event_line">'.date('d-m-Y H:i:s T', $single_event['startTime']).'</span>';
-                }
-                if($single_event['endTime'] != '')
-                {
-                    $output .= '<span class="thescene_event_line">'.date('d-m-Y H:i:s T', $single_event['endTime']).'</span>';
-                }
-                $output .= '<span class="thescene_event_line">'.$single_event['shortDescription'].'</span>';
-                $output .= '<span class="thescene_event_line"><a href="http://thescene.co">More information</a></span>';
-            $output .= '</p>';
-        }
-        $output .= '</div>';
     }
     else
     {
@@ -98,4 +73,38 @@ function thescene_events($atts, $content = null){
 
 }
 
-add_shortcode('thescene', 'thescene_events');
+add_shortcode('thescene', 'thescene_shortcode');
+
+function thescene_events($access_token, $url_events){
+
+    $thescene_events = '';
+
+    $ch_events = curl_init($url_events);
+    curl_setopt($ch_events, CURLOPT_HTTPHEADER, 
+        array('Authorization: bearer '.$access_token)
+    );
+    curl_setopt($ch_events, CURLOPT_RETURNTRANSFER, true);
+    $response_events = curl_exec($ch_events);
+    $result_events = json_decode($response_events, true);
+    curl_close($ch_events);
+    //$thescene_events .= '<pre>'.print_r($result_events, true).'</pre>';
+    $thescene_events .= '<div class="thescene_events">';
+    foreach ($result_events['_embedded']['events'] as $single_event) {
+        $thescene_events .= '<p class="thescene_event">';
+            $thescene_events .= '<span class="thescene_event_line">'.$single_event['eventName'].'</span>';
+            if($single_event['startTime'] != '')
+            {
+                $thescene_events .= '<span class="thescene_event_line">'.date('d-m-Y H:i:s T', $single_event['startTime']).'</span>';
+            }
+            if($single_event['endTime'] != '')
+            {
+                $thescene_events .= '<span class="thescene_event_line">'.date('d-m-Y H:i:s T', $single_event['endTime']).'</span>';
+            }
+            $thescene_events .= '<span class="thescene_event_line">'.$single_event['shortDescription'].'</span>';
+            $thescene_events .= '<span class="thescene_event_line"><a href="http://thescene.co">More information</a></span>';
+        $thescene_events .= '</p>';
+    }
+    $thescene_events .= '</div>';
+
+    return $thescene_events;
+}
