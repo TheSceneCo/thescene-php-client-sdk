@@ -47,6 +47,10 @@ function thescene_options_content(){
             {
                 echo '<p class="notice notice-success">'.__('Data has been Saved.', 'thescene_domain').'</p>';
             }
+            elseif ($_GET['action'] == 'failure')
+            {
+                echo '<p class="notice notice-error">'.__('Atleast ClientID and Secret should not be Empty.', 'thescene_domain').'</p>';
+            }
         }
         ?>
 

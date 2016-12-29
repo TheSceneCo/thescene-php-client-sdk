@@ -21,17 +21,18 @@ You should have received a copy of the Lesser GNU General Public License.
 
 function thescene_shortcode($atts, $content = null){
 
-    require_once('thescene-php-client-sdk-verify.php');
-
-    $thescene_clientid = thescene_decrypt(get_option('thescene_clientID'));
-    $thescene_secret = thescene_decrypt(get_option('thescene_secret'));
-    $thescene_venueid = thescene_decrypt(get_option('thescene_venueID'));    
-
-    $url_master = "http://thescene.co/";
-    $output = "";
-
-    if($thescene_clientid != '' && $thescene_secret != '')
+    if(get_option('thescene_clientID') !== '' && get_option('thescene_secret') !== '')
     {
+
+        require_once('thescene-php-client-sdk-verify.php');
+
+        $thescene_clientid = thescene_decrypt(get_option('thescene_clientID'));
+        $thescene_secret = thescene_decrypt(get_option('thescene_secret'));
+        $thescene_venueid = thescene_decrypt(get_option('thescene_venueID'));
+
+        $url_master = "http://thescene.co/";
+        $output = "";               
+        
         $url_oauth = $url_master."auth/oauth/token?grant_type=client_credentials";
 
         $ch_oauth = curl_init($url_oauth);
