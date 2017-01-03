@@ -54,7 +54,7 @@ function thescene_options_content(){
         }
         ?>
 
-        <form method="post" action="<?php echo plugins_url().'/thescene-php-client-sdk/includes/thescene-php-client-sdk-form.php'; ?>">
+        <form method="post" action="<?php echo plugins_url().'/thescene-php-client-sdk-master/includes/thescene-php-client-sdk-form.php'; ?>">
        
             <table class="form-table">
                 <tbody>                             
