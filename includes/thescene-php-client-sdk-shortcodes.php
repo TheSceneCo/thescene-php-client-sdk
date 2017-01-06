@@ -102,7 +102,7 @@ function thescene_events($access_token, $url_events){
                 $thescene_events .= '<span class="thescene_event_line">'.date('d-m-Y H:i:s T', $single_event['endTime']).'</span>';
             }
             $thescene_events .= '<span class="thescene_event_line">'.$single_event['shortDescription'].'</span>';
-            $thescene_events .= '<span class="thescene_event_line"><a href="http://thescene.co">More information</a></span>';
+            $thescene_events .= '<span class="thescene_event_line"><a href="http://beta.thescene.co/events/'.$single_event['profileId'].'" target="_blank">More information</a></span>';
         $thescene_events .= '</p>';
     }
     $thescene_events .= '</div>';
