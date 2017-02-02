@@ -35,28 +35,38 @@ function thescene_shortcode($atts, $content = null){
         
         $url_oauth = $url_master."auth/oauth/token?grant_type=client_credentials";
 
-        $ch_oauth = curl_init($url_oauth);
-        curl_setopt($ch_oauth, CURLOPT_POST, 1);
-        curl_setopt($ch_oauth, CURLOPT_HTTPAUTH, CURLAUTH_BASIC ) ; 
-        curl_setopt($ch_oauth, CURLOPT_USERPWD, "$thescene_clientid:$thescene_secret");
-        curl_setopt($ch_oauth, CURLOPT_RETURNTRANSFER, true);
-        $response_oauth = curl_exec($ch_oauth);
+        $context_oauth = stream_context_create(array(
+            'http' => array(
+                'method' => 'POST',
+                'header' => array("Authorization: Basic " . base64_encode("$thescene_clientid:$thescene_secret"),
+                    'Accept: application/hal+json',
+                    'Content-Type: application/json',
+                    "User-Agent: " . $_SERVER['HTTP_USER_AGENT']
+                    )
+            )
+        ));
+
+        $response_oauth = file_get_contents($url_oauth, false, $context_oauth); 
         $result_oauth = json_decode($response_oauth, true);
-        curl_close($ch_oauth);
-        //var_dump($result_oauth);
+        //var_dump($result_oauth);       
 
         //////////////////////////////////////////////////////////////////////////////////////////////
 
         $url_welcome = $url_master."api";
 
-        $ch_welcome = curl_init($url_welcome);
-        curl_setopt($ch_welcome, CURLOPT_HTTPHEADER, 
-            array('Authorization: bearer '.$result_oauth['access_token'])
-        );
-        curl_setopt($ch_welcome, CURLOPT_RETURNTRANSFER, true);
-        $response_welcome = curl_exec($ch_welcome);
+        $context_welcome = stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => array("Authorization: bearer " . $result_oauth['access_token'],
+                    'Accept: application/hal+json',
+                    'Content-Type: application/json',
+                    "User-Agent: " . $_SERVER['HTTP_USER_AGENT']
+                    )
+            )
+        ));
+
+        $response_welcome = file_get_contents($url_welcome, false, $context_welcome); 
         $result_welcome = json_decode($response_welcome, true);
-        curl_close($ch_welcome);
         //var_dump($result_welcome);
 
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,15 +90,21 @@ function thescene_events($access_token, $url_events){
 
     $thescene_events = '';
 
-    $ch_events = curl_init($url_events);
-    curl_setopt($ch_events, CURLOPT_HTTPHEADER, 
-        array('Authorization: bearer '.$access_token)
-    );
-    curl_setopt($ch_events, CURLOPT_RETURNTRANSFER, true);
-    $response_events = curl_exec($ch_events);
+    $context_events = stream_context_create(array(
+        'http' => array(
+            'method' => 'GET',
+            'header' => array("Authorization: bearer " . $access_token,
+                'Accept: application/hal+json',
+                'Content-Type: application/json',
+                "User-Agent: " . $_SERVER['HTTP_USER_AGENT']
+                )
+        )
+    ));
+
+    $response_events = file_get_contents($url_events, false, $context_events); 
     $result_events = json_decode($response_events, true);
-    curl_close($ch_events);
     //$thescene_events .= '<pre>'.print_r($result_events, true).'</pre>';
+    
     $thescene_events .= '<div class="thescene_events">';
     foreach ($result_events['_embedded']['events'] as $single_event) {
         $thescene_events .= '<p class="thescene_event">';
