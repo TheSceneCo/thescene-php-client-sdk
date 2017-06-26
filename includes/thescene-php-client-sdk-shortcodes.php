@@ -33,7 +33,7 @@ function thescene_shortcode($atts, $content = null){
         $url_master = "http://api.thescene.co/";
         $output = "";               
         
-        $url_oauth = $url_master."auth/oauth/token?grant_type=client_credentials";
+        $url_oauth = $url_master."oauth/token?grant_type=client_credentials";
 
         $context_oauth = stream_context_create(array(
             'http' => array(
