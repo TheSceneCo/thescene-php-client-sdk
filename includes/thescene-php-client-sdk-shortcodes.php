@@ -30,7 +30,7 @@ function thescene_shortcode($atts, $content = null){
         $thescene_secret = thescene_decrypt(get_option('thescene_secret'));
         $thescene_venueid = thescene_decrypt(get_option('thescene_venueID'));
 
-        $url_master = "http://thescene.co/";
+        $url_master = "http://api.thescene.co/";
         $output = "";               
         
         $url_oauth = $url_master."auth/oauth/token?grant_type=client_credentials";
@@ -52,7 +52,7 @@ function thescene_shortcode($atts, $content = null){
 
         //////////////////////////////////////////////////////////////////////////////////////////////
 
-        $url_welcome = $url_master."api";
+        $url_welcome = $url_master;
 
         $context_welcome = stream_context_create(array(
             'http' => array(
